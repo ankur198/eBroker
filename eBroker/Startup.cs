@@ -1,4 +1,6 @@
 using eBroker.DataAccess;
+using eBroker.Services;
+using eBroker.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +36,9 @@ namespace eBroker
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "eBroker", Version = "v1" });
 			});
 			services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("eTrader")));
+			services.AddSingleton<IDateTimeProvider, DefaultDateTimeProvider>();
+			services.AddTransient<ITraderService, TraderService>();
+			services.AddTransient<IEquityService, EquityService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

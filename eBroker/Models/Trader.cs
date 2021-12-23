@@ -7,15 +7,19 @@ namespace eBroker.Models
 {
 	public class Trader
 	{
-
 		public int Id { get; set; }
 		public double Balance { get; private set; }
 
 		public virtual List<Holding> Holdings { get; } = new();
 
-		public void BuyEquity(Equity equity, int quantity)
+		public void BuyEquity(Equity equity, int quantity, IDateTimeProvider dateTimeProvider)
 		{
-			if (!ICalenderUtil.IsBusinessHours)
+			if (quantity < 1)
+			{
+				throw new ArgumentOutOfRangeException(nameof(quantity));
+			}
+
+			if (!dateTimeProvider.Now.IsBusinessHours())
 			{
 				throw new OutOfBusinessHoursException();
 			}
@@ -34,11 +38,21 @@ namespace eBroker.Models
 
 				Holdings.Add(new Holding(equity, holdingQuantity + quantity));
 			}
+
+			else
+			{
+				throw new InsufficientBalanceException();
+			}
 		}
 
-		public void SellEquity(Equity equity, int quantity)
+		public void SellEquity(Equity equity, int quantity, IDateTimeProvider dateTimeProvider)
 		{
-			if (!ICalenderUtil.IsBusinessHours)
+			if (quantity < 1)
+			{
+				throw new ArgumentOutOfRangeException(nameof(quantity));
+			}
+
+			if (!dateTimeProvider.Now.IsBusinessHours())
 			{
 				throw new OutOfBusinessHoursException();
 			}
@@ -47,16 +61,25 @@ namespace eBroker.Models
 			var holdingQuantity = holding?.Quantity ?? 0;
 			if (holding != null && holdingQuantity >= quantity)
 			{
-				var value = holding.Equity.Price * quantity;
-				var valueAfterDeduction = value - Math.Max(20, Math.Round(value * 0.05 / 100, 2));
-				Balance += valueAfterDeduction;
+				var sellValue = equity.Price * quantity;
+				var sellValueAfterDeduction = sellValue - Math.Max(20, Math.Round(sellValue * 0.05 / 100, 2));
+
+				if (Balance + sellValueAfterDeduction < 0)
+				{
+					throw new InsufficientBalanceException();
+				}
+
+				Balance += sellValueAfterDeduction;
 
 				Holdings.Remove(holding);
-				Holdings.Add(new Holding(equity, holdingQuantity - quantity));
+				if (holdingQuantity - quantity > 0)
+				{
+					Holdings.Add(new Holding(equity, holdingQuantity - quantity));
+				}
 			}
 			else
 			{
-				throw new ArgumentException("Does not hold required qunatity of equity to sell");
+				throw new InsufficientBalanceException("Does not hold required qunatity of equity to sell");
 			}
 		}
 
@@ -68,7 +91,7 @@ namespace eBroker.Models
 				amountAfterDeductions = Math.Round(amount * (100 - 0.05) / 100, 2);
 			}
 
-			this.Balance = amountAfterDeductions;
+			this.Balance += amountAfterDeductions;
 
 			return amountAfterDeductions;
 		}

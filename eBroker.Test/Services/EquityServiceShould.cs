@@ -67,5 +67,19 @@ namespace eBroker.Test.Services
 			sut.GetAll()[1].Price.Should().Be(20);
 
 		}
+
+		[Fact]
+		public void UpdatePrice()
+		{
+			sut.CreateEquity(new Equity("SBIN", 10));
+			sut.GetAll().Should().HaveCount(1);
+			sut.GetAll()[0].Price.Should().Be(10);
+
+			sut.UpdatePrice(new Equity("SBIN", 20));
+			sut.GetAll().Should().HaveCount(1);
+			sut.GetAll()[0].Price.Should().Be(20);
+
+			Assert.Throws<KeyNotFoundException>(() => sut.UpdatePrice(new Equity("ICICI", 20)));
+		}
 	}
 }
