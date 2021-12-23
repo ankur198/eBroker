@@ -2,4 +2,10 @@
 
 Sample Application aspcore web-api application showcasing Unit Testing.
 
-Project achieves 96% code coverage.
+
+## Summary of code-coverage
+
+| Line   | Branch | Method |
+|---------|--------|--------|
+| 99.46% | 100%   | 97.77% |
+
