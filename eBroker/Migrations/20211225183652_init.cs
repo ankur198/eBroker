@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace eBroker.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

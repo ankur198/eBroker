@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eBroker.DataAccess;
+using System.Diagnostics.CodeAnalysis;
 
 namespace eBroker.Migrations
 {
     [DbContext(typeof(DataContext))]
+    [ExcludeFromCodeCoverage]
     partial class DataContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
