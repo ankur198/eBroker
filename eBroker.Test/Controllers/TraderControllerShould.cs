@@ -1,20 +1,13 @@
 ﻿using Xunit;
 using eBroker.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using eBroker.Controllers;
 using eBroker.Models;
 using eBroker.Services;
-using FluentAssertions;
 using Moq;
 using eBroker.ViewModels;
 
 namespace eBroker.Test.Controllers
 {
-	public class TraderControllerShould
+    public class TraderControllerShould
 	{
 		private readonly Equity equity = new Equity("SBIN", 10);
 
